@@ -1,6 +1,7 @@
 package demo.plantodo.service;
 
 import demo.plantodo.domain.*;
+import demo.plantodo.repository.PlanRepository;
 import demo.plantodo.repository.TodoDateRepository;
 import demo.plantodo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TodoDateService {
+
+    private final PlanRepository planRepository;
     private final TodoDateRepository todoDateRepository;
     private final TodoRepository todoRepository;
     private final CommonService commonService;
@@ -127,6 +130,7 @@ public class TodoDateService {
 
         ArrayList<TodoDate> todoDateList = new ArrayList<>();
 
+        int uncheckedCnt = 0;
         for (Todo todo : todolist) {
             /*해당 날짜에 todo로 todoDate를 만들 수 있는지?*/
             if (canMakeTodoDate(todo, searchDate)) {
@@ -143,10 +147,15 @@ public class TodoDateService {
                         TodoDateRep todoDateRep = new TodoDateRep(TodoStatus.UNCHECKED, searchDate, todo);
                         todoDateRepository.save(todoDateRep);
                         todoDateList.add(todoDateRep);
+
+                        uncheckedCnt += 1;
                     }
                 }
             }
         }
+        /*plan - uncheckedCnt 갱신*/
+        planRepository.addUnchecked(plan, uncheckedCnt);
+
         List<TodoDate> notBindingTodo = todoDateRepository.getTodoDateByPlanAndDate(plan, searchDate);
         for (TodoDate todoDate : notBindingTodo) {
             todoDateList.add(todoDate);
