@@ -81,10 +81,13 @@ public class TodoDateController {
         Plan plan = planService.findOne(todoDateDailyInputVO.getPlanId());
         TodoDate todoDate = new TodoDateDaily(TodoStatus.UNCHECKED, todoDateDailyInputVO.getSelectedDailyDate(), todoDateDailyInputVO.getTitle(), plan);
         todoDateService.save(todoDate);
+
         Long todoDateId = todoDate.getId();
         TodoDateDailyOutputVO outputVO = new TodoDateDailyOutputVO();
         outputVO.setTodoDateId(todoDateId);
         outputVO.setSearchDate(todoDateDailyInputVO.getSelectedDailyDate());
+
+        planService.addUnchecked(plan, 1);
         return outputVO;
     }
 
