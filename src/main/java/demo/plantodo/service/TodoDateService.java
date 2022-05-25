@@ -61,16 +61,18 @@ public class TodoDateService {
     }
 
 
-    public void todoDateInitiate(LocalDate startDate, LocalDate endDate, Todo todo) {
+    public int todoDateInitiate(LocalDate startDate, LocalDate endDate, Todo todo) {
         int days = Period.between(startDate, endDate).getDays();
+        int cnt = 0;
         for (int i = 0; i < days+1; i++) {
             LocalDate date = startDate.plusDays(i);
             if (canMakeTodoDate(todo, date)) {
+                cnt ++;
                 TodoDateRep todoDateRep = new TodoDateRep(TodoStatus.UNCHECKED, date, todo);
                 todoDateRepository.save(todoDateRep);
             }
-
         }
+        return cnt;
     }
 
     public LinkedHashMap<LocalDate, List<TodoDate>> allTodoDatesInTerm(Plan plan, @Nullable LocalDate startDate, @Nullable LocalDate endDate) {

@@ -102,4 +102,9 @@ public class PlanService {
         }
         return result;
     }
+
+    public void addUnchecked(Plan plan, int uncheckedTodoDateCnt) {
+        planRepository.addUnchecked(plan, uncheckedTodoDateCnt);
+    }
+
 }

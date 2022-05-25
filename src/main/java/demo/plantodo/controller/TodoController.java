@@ -78,7 +78,11 @@ public class TodoController {
         }
 
         /*todoDate 만들기*/
-        todoDateService.todoDateInitiate(startDate, endDate, todo);
+        int uncheckedTodoDateCnt = todoDateService.todoDateInitiate(startDate, endDate, todo);
+
+        /*연결된 Plan의 unchecked_TodoDate_cnt 업데이트하기*/
+        planService.addUnchecked(plan, uncheckedTodoDateCnt);
+
         return "redirect:/home";
     }
 

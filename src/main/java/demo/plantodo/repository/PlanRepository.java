@@ -118,4 +118,9 @@ public class PlanRepository {
                 .setParameter("now", PlanStatus.NOW)
                 .getResultList();
     }
+
+    public void addUnchecked(Plan plan, int uncheckedTodoDateCnt) {
+        plan.addUnchecked(uncheckedTodoDateCnt);
+    }
+
 }
