@@ -119,8 +119,13 @@ public class PlanRepository {
                 .getResultList();
     }
 
+    /*checkedCnt / uncheckedCnt 변경 메서드*/
     public void addUnchecked(Plan plan, int uncheckedTodoDateCnt) {
         plan.addUnchecked(uncheckedTodoDateCnt);
     }
 
+    public void deleteCheckedAndUnchecked(Long planId, int uncheckedCnt, int checkedCnt) {
+        Plan plan = findOne(planId);
+        plan.deleteCheckedAndUnchecked(uncheckedCnt, checkedCnt);
+    }
 }
