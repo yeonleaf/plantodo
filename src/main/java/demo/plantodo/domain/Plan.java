@@ -58,9 +58,9 @@ public class Plan {
     }
 
     /*checked- unchecked- (to-do 삭제)*/
-    public void minusCheckedAndUnchecked(int uncheckedCnt, int checkedCnt) {
-        this.checked_TodoDate_cnt -= checkedCnt;
+    public void deleteCheckedAndUnchecked(int uncheckedCnt, int checkedCnt) {
         this.unchecked_TodoDate_cnt -= uncheckedCnt;
+        this.checked_TodoDate_cnt -= checkedCnt;
     }
 
     /*checked-1 unchecked+1 (todoDate 상태 변경)*/
