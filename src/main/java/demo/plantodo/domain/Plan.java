@@ -51,6 +51,32 @@ public class Plan {
     }
 
     /*비즈니스 로직*/
+
+    /*unchecked (todoDate 등록)*/
+    public void addUnchecked(int uncheckedCnt) {
+        this.unchecked_TodoDate_cnt += uncheckedCnt;
+    }
+
+    /*checked- unchecked- (to-do 삭제)*/
+    public void minusCheckedAndUnchecked(int uncheckedCnt, int checkedCnt) {
+        this.checked_TodoDate_cnt -= checkedCnt;
+        this.unchecked_TodoDate_cnt -= uncheckedCnt;
+    }
+
+    /*checked-1 unchecked+1 (todoDate 상태 변경)*/
+    public void exchangeCheckedToUnchecked() {
+        this.checked_TodoDate_cnt -= 1;
+        this.unchecked_TodoDate_cnt += 1;
+
+    }
+
+    /*checked+1 unchecked-1 (todoDate 상태 변경)*/
+    public void exchangeUncheckedToChecked() {
+        this.unchecked_TodoDate_cnt -= 1;
+        this.checked_TodoDate_cnt += 1;
+    }
+
+
     public void changeToDeleted() {
         if (this.planStatus.equals(PlanStatus.NOW) || this.planStatus.equals(PlanStatus.COMPLETED)) {
             this.planStatus = PlanStatus.DELETED;
