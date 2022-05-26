@@ -171,12 +171,37 @@ public class TodoDateService {
         todoDateRepository.switchStatusDaily(todoDateId);
     }
 
+
+    /*삭제*/
     public void deleteRep(Long todoDateId) {
-        todoDateRepository.deleteRep(todoDateId);
+        TodoDateRep todoDateRep = todoDateRepository.findOneRep(todoDateId);
+        Long planId = todoDateRep.getTodo().getPlan().getId();
+        int[] counts = countCounts(todoDateRep);
+        planRepository.deleteCheckedAndUnchecked(planId, counts[0], counts[1]);
+        todoDateRepository.deleteRep(todoDateRep);
     }
 
     public void deleteDaily(Long todoDateId) {
-        todoDateRepository.deleteDaily(todoDateId);
+        TodoDateDaily todoDateDaily = todoDateRepository.findOneDaily(todoDateId);
+        Long planId = todoDateDaily.getPlan().getId();
+        int[] counts = countCounts(todoDateDaily);
+        planRepository.deleteCheckedAndUnchecked(planId, counts[0], counts[1]);
+        todoDateRepository.deleteDaily(todoDateDaily);
+    }
+
+    private int[] countCounts(TodoDate todoDate) {
+        int checked = 0;
+        int unchecked = 0;
+
+        if (todoDate.getTodoStatus().equals(TodoStatus.CHECKED)) {
+            checked += 1;
+        } else {
+            unchecked += 1;
+        }
+
+        int[] res = {checked, unchecked};
+
+        return res;
     }
 
     public int deleteDailyByPlan(LocalDate today, Long planId) {

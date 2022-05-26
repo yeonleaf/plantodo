@@ -23,8 +23,23 @@ public class TodoService {
     private final TodoDateService todoDateService;
     private final CommonService commonService;
 
-    public void save(Todo todo) {
+    public void save(Plan plan, Todo todo) {
         todoRepository.save(todo);
+
+        /*TodoDate 만들기*/
+        /*startDate, endDate 정의*/
+        LocalDate startDate = plan.getStartDate();
+        LocalDate endDate = LocalDate.now();
+        if (plan instanceof PlanTerm) {
+            PlanTerm planTerm = (PlanTerm) plan;
+            endDate = planTerm.getEndDate();
+        }
+
+        /*todoDate 만들기*/
+        int uncheckedTodoDateCnt = todoDateService.todoDateInitiate(startDate, endDate, todo);
+
+        /*연결된 Plan의 unchecked_TodoDate_cnt 업데이트하기*/
+        planRepository.addUnchecked(plan, uncheckedTodoDateCnt);
     }
 
     public Todo findOne(Long todoId) {
@@ -41,7 +56,13 @@ public class TodoService {
         int uncheckedCnt = 0;
         for (TodoDate todoDate : todoDateByTodoId) {
             if (todoDate.getDateKey().equals(today) || todoDate.getDateKey().isAfter(today)) {
-                todoDateRepository.deleteRep(todoDate.getId());
+                if (todoDate instanceof TodoDateRep) {
+                    todoDateRepository.deleteRep((TodoDateRep) todoDate);
+                }
+
+                if (todoDate instanceof TodoDateDaily) {
+                    todoDateRepository.deleteDaily((TodoDateDaily) todoDate);
+                }
 
                 /*todoDate가 checked상태면 checkedCnt, unchecked상태면 uncheckedCnt에 더한다.*/
                 if (todoDate.getTodoStatus().equals(TodoStatus.CHECKED)) {
@@ -54,9 +75,12 @@ public class TodoService {
             }
         }
 
+        System.out.println("[checkedCnt] : " + checkedCnt);
+        System.out.println("[uncheckedCnt] : " + uncheckedCnt);
+
         /*연결된 plan의 checkedCnt와 uncheckedCnt를 원복한다.*/
         Plan plan = findConnectedPlan(todoId);
-        planRepository.deleteCheckedAndUnchecked(plan.getId(), uncheckedCnt, checkedCnt);
+        planRepository.deleteCheckedAndUnchecked(plan.getId(), checkedCnt, uncheckedCnt);
 
         /*todo를 삭제한다.*/
         int deleteCnt = checkedCnt + uncheckedCnt;
@@ -82,7 +106,7 @@ public class TodoService {
             List<TodoDate> todoDateAfterToday = todoRepository.getTodoDateByTodoIdAfterToday(todoId, today);
             for (TodoDate todoDate : todoDateAfterToday) {
                 if (todoDate instanceof TodoDateRep) {
-                    todoDateRepository.deleteRep(todoDate.getId());
+                    todoDateRepository.deleteRep((TodoDateRep) todoDate);
                 }
             }
             /*to-do 저장*/

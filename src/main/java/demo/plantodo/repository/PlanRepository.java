@@ -124,7 +124,7 @@ public class PlanRepository {
         plan.addUnchecked(uncheckedTodoDateCnt);
     }
 
-    public void deleteCheckedAndUnchecked(Long planId, int uncheckedCnt, int checkedCnt) {
+    public void deleteCheckedAndUnchecked(Long planId, int checkedCnt, int uncheckedCnt) {
         Plan plan = findOne(planId);
         plan.deleteCheckedAndUnchecked(uncheckedCnt, checkedCnt);
     }

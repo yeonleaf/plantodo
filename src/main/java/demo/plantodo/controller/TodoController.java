@@ -66,22 +66,7 @@ public class TodoController {
         Plan plan = planService.findOne(todoRegisterForm.getPlanId());
 
         Todo todo = new Todo(member, plan, todoRegisterForm.getTitle(), repOption, repValue);
-        todoService.save(todo);
-
-        /*TodoDate 만들기*/
-        /*startDate, endDate 정의*/
-        LocalDate startDate = plan.getStartDate();
-        LocalDate endDate = LocalDate.now();
-        if (plan instanceof PlanTerm) {
-            PlanTerm planTerm = (PlanTerm) plan;
-            endDate = planTerm.getEndDate();
-        }
-
-        /*todoDate 만들기*/
-        int uncheckedTodoDateCnt = todoDateService.todoDateInitiate(startDate, endDate, todo);
-
-        /*연결된 Plan의 unchecked_TodoDate_cnt 업데이트하기*/
-        planService.addUnchecked(plan, uncheckedTodoDateCnt);
+        todoService.save(plan, todo);
 
         return "redirect:/home";
     }

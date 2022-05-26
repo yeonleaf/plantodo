@@ -49,6 +49,7 @@ public class TodoDateController {
         } else {
             todoDateService.deleteDaily(todoDateId);
         }
+
         if (todoDateDeleteDataVO.getPageInfo().equals("home")) {
             TodoDateResHomeVO home = new TodoDateResHomeVO();
             home.setSearchDate(todoDateDeleteDataVO.getSelectedDate());

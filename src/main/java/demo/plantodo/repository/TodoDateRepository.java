@@ -44,15 +44,6 @@ public class TodoDateRepository {
         daily.swtichStatus();
     }
 
-    public void deleteRep(Long todoDateId) {
-        TodoDate todoDate = findOneRep(todoDateId);
-        em.remove(todoDate);
-    }
-
-    public void deleteDaily(Long todoDateId) {
-        TodoDate todoDate = findOneDaily(todoDateId);
-        em.remove(todoDate);
-    }
 
     public void updateRep(Todo todo, Long todoDateId) {
         TodoDateRep oneRep = findOneRep(todoDateId);
@@ -75,5 +66,15 @@ public class TodoDateRepository {
             TodoDateDaily todoDateDaily = (TodoDateDaily) todoDate;
             todoDateDaily.setTitle(updateTitle);
         }
+    }
+
+
+    /* 삭제 */
+    public void deleteRep(TodoDateRep todoDateRep) {
+        em.remove(todoDateRep);
+    }
+
+    public void deleteDaily(TodoDateDaily todoDateDaily) {
+        em.remove(todoDateDaily);
     }
 }
