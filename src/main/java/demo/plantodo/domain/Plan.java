@@ -64,18 +64,11 @@ public class Plan {
     }
 
     /*checked-1 unchecked+1 (todoDate 상태 변경)*/
-    public void exchangeCheckedToUnchecked() {
-        this.checked_TodoDate_cnt -= 1;
-        this.unchecked_TodoDate_cnt += 1;
+    public void exchangeCheckedToUnchecked(int uncheckedCnt, int checkedCnt) {
+        this.checked_TodoDate_cnt += uncheckedCnt;
+        this.unchecked_TodoDate_cnt += checkedCnt;
 
     }
-
-    /*checked+1 unchecked-1 (todoDate 상태 변경)*/
-    public void exchangeUncheckedToChecked() {
-        this.unchecked_TodoDate_cnt -= 1;
-        this.checked_TodoDate_cnt += 1;
-    }
-
 
     public void changeToDeleted() {
         if (this.planStatus.equals(PlanStatus.NOW) || this.planStatus.equals(PlanStatus.COMPLETED)) {

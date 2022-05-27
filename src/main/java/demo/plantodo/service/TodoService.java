@@ -37,9 +37,6 @@ public class TodoService {
 
         /*todoDate 만들기*/
         int uncheckedTodoDateCnt = todoDateService.todoDateInitiate(startDate, endDate, todo);
-
-        /*연결된 Plan의 unchecked_TodoDate_cnt 업데이트하기*/
-        planRepository.addUnchecked(plan, uncheckedTodoDateCnt);
     }
 
     public Todo findOne(Long todoId) {

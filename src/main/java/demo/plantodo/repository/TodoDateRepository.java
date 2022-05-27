@@ -28,20 +28,22 @@ public class TodoDateRepository {
     public TodoDateRep findOneRep(Long todoDateId) { return em.find(TodoDateRep.class, todoDateId); }
 
     public List<TodoDate> getTodoDateByTodoAndDate(Todo todo, LocalDate searchDate) {
-        return em.createQuery("select td from TodoDate td where td.todo.id = :todoId and td.dateKey = :searchDate")
+        return em.createQuery("select td from TodoDateRep td where td.todo.id = :todoId and td.dateKey = :searchDate")
                 .setParameter("todoId", todo.getId())
                 .setParameter("searchDate", searchDate)
                 .getResultList();
     }
 
-    public void switchStatusRep(Long todoDateId) {
+    public TodoDateRep switchStatusRep(Long todoDateId) {
         TodoDateRep rep = findOneRep(todoDateId);
         rep.swtichStatus();
+        return rep;
     }
 
-    public void switchStatusDaily(Long todoDateId) {
+    public TodoDateDaily switchStatusDaily(Long todoDateId) {
         TodoDateDaily daily = findOneDaily(todoDateId);
         daily.swtichStatus();
+        return daily;
     }
 
 

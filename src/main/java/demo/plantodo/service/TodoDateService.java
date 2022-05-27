@@ -24,6 +24,7 @@ public class TodoDateService {
     private final CommonService commonService;
 
     public void save(TodoDate todoDate) {
+        planRepository.addUnchecked(getPlanId(todoDate), 1);
         todoDateRepository.save(todoDate);
     }
 
@@ -72,7 +73,7 @@ public class TodoDateService {
             if (canMakeTodoDate(todo, date)) {
                 cnt ++;
                 TodoDateRep todoDateRep = new TodoDateRep(TodoStatus.UNCHECKED, date, todo);
-                todoDateRepository.save(todoDateRep);
+                save(todoDateRep);
             }
         }
         return cnt;
@@ -163,16 +164,38 @@ public class TodoDateService {
         return todoDateList;
     }
 
+    /*상태 변경 메서드*/
     public void switchStatusRep(Long todoDateId) {
-        todoDateRepository.switchStatusRep(todoDateId);
+        TodoDateRep todoDateRep = todoDateRepository.switchStatusRep(todoDateId);
+        /* checked -> unchecked (plan에 반영) */
+        checkStatAndReviseCnt(todoDateRep);
     }
 
     public void switchStatusDaily(Long todoDateId) {
-        todoDateRepository.switchStatusDaily(todoDateId);
+        TodoDateDaily todoDateDaily = todoDateRepository.switchStatusDaily(todoDateId);
+        /* unchecked -> checked (plan에 반영) */
+        checkStatAndReviseCnt(todoDateDaily);
     }
 
+    private void checkStatAndReviseCnt(TodoDate todoDate) {
 
-    /*삭제*/
+        Long planId = getPlanId(todoDate);
+
+        if (todoDate.getTodoStatus().equals(TodoStatus.CHECKED)) {
+            planRepository.exchangeCheckedToUnchecked(planId, 1, -1);
+        }
+        if (todoDate.getTodoStatus().equals(TodoStatus.UNCHECKED)) {
+            planRepository.exchangeCheckedToUnchecked(planId, -1, 1);
+        }
+    }
+
+    private Long getPlanId(TodoDate todoDate) {
+
+        return todoDate instanceof TodoDateRep ? ((TodoDateRep) todoDate).getTodo().getPlan().getId() : ((TodoDateDaily) todoDate).getPlan().getId();
+
+    }
+
+    /*삭제 메서드*/
     public void deleteRep(Long todoDateId) {
         TodoDateRep todoDateRep = todoDateRepository.findOneRep(todoDateId);
         Long planId = todoDateRep.getTodo().getPlan().getId();

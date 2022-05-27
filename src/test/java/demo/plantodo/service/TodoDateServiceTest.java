@@ -51,4 +51,33 @@ class TodoDateServiceTest {
         //then
         Assertions.assertThat(planRepository.findOne(plan.getId()).getUnchecked_TodoDate_cnt()).isEqualTo(0);
     }
+
+    @Test
+    public void todoDateSwitchTest() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberRepository.save(member);
+
+        /*plan 저장*/
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTerm plan = new PlanTerm(member, PlanStatus.NOW, start, "plan1", end);
+        planRepository.saveTerm(plan);
+
+        /*todoDate 저장*/
+        TodoDateDaily todoDate = new TodoDateDaily(TodoStatus.UNCHECKED, start, "todoDate1", plan);
+        todoDateService.save(todoDate);
+
+        System.out.println("[변경 전 uncheckedCnt] : " + planRepository.findOne(plan.getId()).getUnchecked_TodoDate_cnt());
+
+        //when
+        /*todoDate 상태 변경*/
+        todoDateService.switchStatusDaily(todoDate.getId());
+
+        //then
+        Assertions.assertThat(planRepository.findOne(plan.getId()).getChecked_TodoDate_cnt()).isEqualTo(1);
+        Assertions.assertThat(planRepository.findOne(plan.getId()).getUnchecked_TodoDate_cnt()).isEqualTo(0);
+
+    }
 }
