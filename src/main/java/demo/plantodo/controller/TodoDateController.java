@@ -88,7 +88,6 @@ public class TodoDateController {
         outputVO.setTodoDateId(todoDateId);
         outputVO.setSearchDate(todoDateDailyInputVO.getSelectedDailyDate());
 
-        planService.addUnchecked(plan, 1);
         return outputVO;
     }
 
