@@ -59,6 +59,13 @@ public class TodoDateRepository {
                 .getResultList();
     }
 
+    public List<TodoDate> getTodoDateRep_ByTodoAndDate(Todo todo, LocalDate searchDate) {
+        return em.createQuery("select td from TodoDate td where treat(td as TodoDateRep).todo.id=:todoId and td.dateKey=:searchDate")
+                .setParameter("todoId", todo.getId())
+                .setParameter("searchDate", searchDate)
+                .getResultList();
+    }
+
     public void updateTitle(Long todoDateId, String updateTitle) {
         TodoDate todoDate = findOne(todoDateId);
         if (todoDate instanceof TodoDateRep) {

@@ -101,7 +101,29 @@ class TodoServiceTest {
     }
 
     @Test
-    public void deleteTodoTest() throws Exception {
+    public void saveTodoTest_planCount() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberRepository.save(member);
+
+        /*plan 저장*/
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTerm plan = new PlanTerm(member, PlanStatus.NOW, start, "plan1", end);
+        planRepository.saveTerm(plan);
+
+        //when
+        /*to-do 저장 (todoDate 자동 생성)*/
+        Todo todo = new Todo(member, plan, "todo1", 0, null);
+        todoService.save(plan, todo);
+
+        //then
+        Assertions.assertThat(todo.getPlan().getUnchecked_TodoDate_cnt()).isEqualTo(4);
+    }
+
+    @Test
+    public void deleteTodoTest_planCount() throws Exception {
         //given
         /*member 저장*/
         Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
