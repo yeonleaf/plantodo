@@ -96,4 +96,12 @@ public class Plan {
         }
     }
 
+    // 달성도 계산 로직
+    public float calculate_plan_compPercent() {
+        float checkedCnt = this.getChecked_TodoDate_cnt();
+        float uncheckedCnt = this.getUnchecked_TodoDate_cnt();
+        float tmp = (checkedCnt / (uncheckedCnt + checkedCnt)) * 100;
+        float compPercent = Math.round(tmp*100)/100.0f;
+        return compPercent;
+    }
 }
