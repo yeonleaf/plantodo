@@ -122,6 +122,10 @@ public class TodoDateService {
         return todoDateList;
     }
 
+    public List<TodoDate> getTodoDateRep_ByTodoAndDate(Todo todo, LocalDate searchDate) {
+        return todoDateRepository.getTodoDateRep_ByTodoAndDate(todo, searchDate);
+    }
+
     public boolean canMakeTodoDate(Todo todo, LocalDate date) {
         int repOption = todo.getRepOption();
         switch (repOption) {
@@ -236,5 +240,9 @@ public class TodoDateService {
 
     public void updateTitle(Long todoDateId, String updateTitle) {
         todoDateRepository.updateTitle(todoDateId, updateTitle);
+    }
+
+    public List<TodoDate> getTodoDateByTodo(Todo todo) {
+        return todoDateRepository.getTodoDateByTodo(todo);
     }
 }

@@ -27,6 +27,13 @@ public class TodoDateRepository {
     }
     public TodoDateRep findOneRep(Long todoDateId) { return em.find(TodoDateRep.class, todoDateId); }
 
+
+    public List<TodoDate> getTodoDateByTodo(Todo todo) {
+        return em.createQuery("select td from TodoDateRep td where td.todo.id = :todoId")
+                .setParameter("todoId", todo.getId())
+                .getResultList();
+    }
+
     public List<TodoDate> getTodoDateByTodoAndDate(Todo todo, LocalDate searchDate) {
         return em.createQuery("select td from TodoDateRep td where td.todo.id = :todoId and td.dateKey = :searchDate")
                 .setParameter("todoId", todo.getId())
@@ -86,4 +93,5 @@ public class TodoDateRepository {
     public void deleteDaily(TodoDateDaily todoDateDaily) {
         em.remove(todoDateDaily);
     }
+
 }
