@@ -41,13 +41,13 @@ public class PlanService {
         return planRepository.findAllPlan(memberId);
     }
 
-    public HashMap<Plan, Float> findAllPlan_withCompPercent(Long memberId) {
+    public HashMap<Plan, Integer> findAllPlan_withCompPercent(Long memberId) {
         /*HashMap -> plan:달성도 계산*/
-        HashMap<Plan, Float> resultMap = new HashMap<>();
+        HashMap<Plan, Integer> resultMap = new HashMap<>();
         List<Plan> plans = planRepository.findAllPlan(memberId);
         for (Plan plan : plans) {
             /*달성도 계산*/
-            Float compPercent = plan.calculate_plan_compPercent();
+            int compPercent = plan.calculate_plan_compPercent();
             resultMap.put(plan, compPercent);
         }
         return resultMap;

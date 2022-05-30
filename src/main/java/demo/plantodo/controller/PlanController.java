@@ -88,7 +88,7 @@ public class PlanController {
     @GetMapping("/plans")
     public String plans(Model model, HttpServletRequest request) {
         Long memberId = memberService.getMemberId(request);
-        HashMap<Plan, Float> plans = planService.findAllPlan_withCompPercent(memberId);
+        HashMap<Plan, Integer> plans = planService.findAllPlan_withCompPercent(memberId);
         model.addAttribute("plans", plans);
         return "plan/plan-list";
     }
