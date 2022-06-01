@@ -35,12 +35,14 @@ public class Plan {
     @Column(insertable=false, updatable=false)
     private String dtype;
 
+    private boolean emphasis;
 
     public Plan(Member member, PlanStatus planStatus, LocalDate startDate, String title) {
         this.member = member;
         this.planStatus = planStatus;
         this.startDate = startDate;
         this.title = title;
+        this.emphasis = false;
     }
 
     /*비즈니스 로직*/
@@ -67,6 +69,14 @@ public class Plan {
             this.planStatus = PlanStatus.COMPLETED;
         } else {
             throw new IllegalStateException();
+        }
+    }
+
+    public void switchEmphasis() {
+        if (this.emphasis = false) {
+            this.emphasis = true;
+        } else {
+            this.emphasis = false;
         }
     }
 
