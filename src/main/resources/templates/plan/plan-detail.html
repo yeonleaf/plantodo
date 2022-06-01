@@ -29,9 +29,9 @@
                 <div class="row mx-2 my-2">
                     <div class="justify-content-center">
                         <p th:text="${plan.title}" class="fs-3"></p>
-                        <span id="emphasis">
+                        <span id="emphasis" th:if="${plan.planStatus.toString().equals('NOW')}">
                             <fieldset>
-                                <input type="checkbox" th:id="${'emphasis'+plan.id}"><label th:for="${'emphasis'+plan.id}">⭐</label>
+                                <input type="checkbox" th:id="${'emphasis'+plan.id}" th:checked="${plan.emphasis==true}" th:attr="onclick=|switchPlanEmphasis('${plan.id}', 'detail')|"><label th:for="${'emphasis'+plan.id}">⭐</label>
                             </fieldset>
                         </span>
                     </div>

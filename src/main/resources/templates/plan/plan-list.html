@@ -46,8 +46,8 @@
                                         <span th:text="${plan.value + '% 달성'}"></span>
                                     </div>
                                     <div class="col" id="emphasis">
-                                        <fieldset>
-                                            <input type="checkbox" th:id="${'emphasis'+plan.key.id}"><label th:for="${'emphasis'+plan.key.id}">⭐</label>
+                                        <fieldset th:if="${plan.key.planStatus.toString().equals('NOW')}" >
+                                            <input type="checkbox" th:id="${'emphasis'+plan.key.id}" th:checked="${plan.key.emphasis==true}" th:attr="onclick=|switchPlanEmphasis('${plan.key.id}', 'list')|"><label th:for="${'emphasis'+plan.key.id}">⭐</label>
                                         </fieldset>
                                     </div>
                                 </div>
