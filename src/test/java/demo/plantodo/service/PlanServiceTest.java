@@ -1,6 +1,7 @@
 package demo.plantodo.service;
 
 import demo.plantodo.domain.*;
+import demo.plantodo.form.PlanTermRegisterForm;
 import demo.plantodo.repository.MemberRepository;
 import demo.plantodo.repository.PlanRepository;
 import org.assertj.core.api.Assertions;
@@ -13,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,4 +102,45 @@ class PlanServiceTest {
         //then
         Assertions.assertThat(planService.findOne(plan.getId()).isEmphasis()).isTrue();
     }
+
+    @Test
+    public void saveTerm_withEndTime_Test() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, LocalTime.of(16, 0));
+
+        //when
+        /*plan 저장*/
+        planService.saveTerm(member, form);
+
+        //then
+        Long memberId = member.getId();
+        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(16, 0)));
+    }
+
+    @Test
+    public void saveTerm_withoutEndTime_Test() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, null);
+
+        //when
+        /*plan 저장*/
+        planService.saveTerm(member, form);
+
+        //then
+        Long memberId = member.getId();
+        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(23, 59)));
+    }
+
 }
