@@ -2,19 +2,19 @@ package demo.plantodo.service;
 
 import demo.plantodo.domain.*;
 import demo.plantodo.form.PlanRegularUpdateForm;
+import demo.plantodo.form.PlanTermRegisterForm;
 import demo.plantodo.form.PlanTermUpdateForm;
 import demo.plantodo.repository.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +28,19 @@ public class PlanService {
     public void saveRegular(PlanRegular planRegular) {
         planRepository.saveRegular(planRegular);
     }
+
     public void saveTerm(PlanTerm planTerm) {
         planRepository.saveTerm(planTerm);
+    }
+    /*PlanController - planRegisterTerm 전용*/
+    public void saveTerm(Member member, PlanTermRegisterForm form) {
+        planRepository.saveTerm(createPlanTerm(member, form));
+    }
+
+    private PlanTerm createPlanTerm(Member member, PlanTermRegisterForm form) {
+        LocalTime endTime = form.getEndTime() == null ? LocalTime.of(23, 59) : form.getEndTime();
+        return new PlanTerm(member, PlanStatus.NOW, form.getStartDate(), form.getTitle(), form.getEndDate(), endTime);
+
     }
 
     /*조회*/
