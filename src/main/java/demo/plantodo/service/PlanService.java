@@ -80,8 +80,8 @@ public class PlanService {
         planRepository.updateRegular(planRegularUpdateForm, planId);
     }
 
-    public void updateTerm(PlanTermUpdateForm planTermUpdateForm, Long planId) {
-        planRepository.updateTerm(planTermUpdateForm, planId);
+    public void updateTerm(PlanTermUpdateForm form, Long planId) {
+        planRepository.updateTerm(form, planId);
     }
 
     public void switchPlanEmphasis(Long planId) {

@@ -212,6 +212,7 @@ public class PlanController {
         planTermUpdateForm.setTitle(plan.getTitle());
         planTermUpdateForm.setStartDate(plan.getStartDate());
         planTermUpdateForm.setEndDate(plan.getEndDate());
+        planTermUpdateForm.setEndTime(plan.getEndTime().toString());
         model.addAttribute("planId", planId);
         model.addAttribute("planTermUpdateForm", planTermUpdateForm);
         return "plan/update-term";

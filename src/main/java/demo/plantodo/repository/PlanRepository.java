@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -105,6 +106,7 @@ public class PlanRepository {
         planTerm.setTitle(planTermUpdateForm.getTitle());
         planTerm.setStartDate(planTermUpdateForm.getStartDate());
         planTerm.setEndDate(planTermUpdateForm.getEndDate());
+        planTerm.setEndTime(LocalTime.parse(planTermUpdateForm.getEndTime()));
     }
 
     public void updateStatusDeleted(Long planId) {

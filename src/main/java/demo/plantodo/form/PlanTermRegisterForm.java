@@ -36,4 +36,11 @@ public class PlanTermRegisterForm {
     @Nullable
     private String endTime;
 
+    /*테스트용 생성자*/
+    public PlanTermRegisterForm(String title, LocalDate startDate, LocalDate endDate, @Nullable String endTime) {
+        this.title = title;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.endTime = endTime;
+    }
 }

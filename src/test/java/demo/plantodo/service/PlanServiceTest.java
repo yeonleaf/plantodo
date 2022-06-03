@@ -2,6 +2,7 @@ package demo.plantodo.service;
 
 import demo.plantodo.domain.*;
 import demo.plantodo.form.PlanTermRegisterForm;
+import demo.plantodo.form.PlanTermUpdateForm;
 import demo.plantodo.repository.MemberRepository;
 import demo.plantodo.repository.PlanRepository;
 import org.assertj.core.api.Assertions;
@@ -103,44 +104,93 @@ class PlanServiceTest {
         Assertions.assertThat(planService.findOne(plan.getId()).isEmphasis()).isTrue();
     }
 
-//    @Test
-//    public void saveTerm_withEndTime_Test() throws Exception {
-//        //given
-//        /*member 저장*/
-//        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
-//        memberService.save(member);
-//
-//        LocalDate start = LocalDate.now();
-//        LocalDate end = start.plusDays(3);
-//        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, LocalTime.of(16, 0));
-//
-//        //when
-//        /*plan 저장*/
-//        planService.saveTerm(member, form);
-//
-//        //then
-//        Long memberId = member.getId();
-//        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(16, 0)));
-//    }
+    @Test
+    public void saveTerm_withEndTime_Test() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
 
-//    @Test
-//    public void saveTerm_withoutEndTime_Test() throws Exception {
-//        //given
-//        /*member 저장*/
-//        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
-//        memberService.save(member);
-//
-//        LocalDate start = LocalDate.now();
-//        LocalDate end = start.plusDays(3);
-//        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, null);
-//
-//        //when
-//        /*plan 저장*/
-//        planService.saveTerm(member, form);
-//
-//        //then
-//        Long memberId = member.getId();
-//        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(23, 59)));
-//    }
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, "16:00");
 
+        //when
+        /*plan 저장*/
+        planService.saveTerm(member, form);
+
+        //then
+        Long memberId = member.getId();
+        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(16, 0)));
+    }
+
+    @Test
+    public void saveTerm_withoutEndTime_Test() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, "");
+
+        //when
+        /*plan 저장*/
+        planService.saveTerm(member, form);
+
+        //then
+        Long memberId = member.getId();
+        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(23, 59)));
+    }
+
+    @Test
+    public void updateTerm_noEndTime_editEndTime() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*plan 저장 (endTime 미기재)*/
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTermRegisterForm registerform = new PlanTermRegisterForm("plan1", start, end, "");
+        planService.saveTerm(member, registerform);
+
+        //when
+        Long memberId = member.getId();
+        Plan savedPlan = planService.findAllPlan(memberId).get(0);
+
+        PlanTermUpdateForm updateForm = new PlanTermUpdateForm("plan1", start, end, "18:00");
+        planService.updateTerm(updateForm, savedPlan.getId());
+
+        //then
+        PlanTerm findPlan = (PlanTerm) planService.findOne(savedPlan.getId());
+        Assertions.assertThat(findPlan.getEndTime().equals("18:00"));
+    }
+
+    @Test
+    public void updateTerm_withEndTime_editEndTime() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*plan 저장 (endTime 미기재)*/
+        LocalDate start = LocalDate.now();
+        LocalDate end = start.plusDays(3);
+        PlanTermRegisterForm registerform = new PlanTermRegisterForm("plan1", start, end, "17:00");
+        planService.saveTerm(member, registerform);
+
+        //when
+        Long memberId = member.getId();
+        Plan savedPlan = planService.findAllPlan(memberId).get(0);
+
+        PlanTermUpdateForm updateForm = new PlanTermUpdateForm("plan1", start, end, "18:00");
+        planService.updateTerm(updateForm, savedPlan.getId());
+
+        //then
+        PlanTerm findPlan = (PlanTerm) planService.findOne(savedPlan.getId());
+        Assertions.assertThat(findPlan.getEndTime().equals("18:00"));
+    }
 }

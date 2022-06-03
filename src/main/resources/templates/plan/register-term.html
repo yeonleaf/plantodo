@@ -45,13 +45,13 @@
             <div class="accordion-item">
                 <h2 class="accordion-header" id="headingTwo">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                        종료 시간을 입력하고 싶다면 클릭하세요.
+                        종료 시간을 설정하고 싶다면 클릭하세요. (입력하지 않을 경우 23:59시로 자동 입력됩니다.)
                     </button>
                 </h2>
                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                        <label for="endTime" th:value="*{endTime}" class="form-label">종료 시간</label>
-                        <input type="time" id="endTime" name="endTime" class="form-control">
+                        <label for="endTime" class="form-label">종료 시간</label>
+                        <input type="time" id="endTime" name="endTime" th:value="*{endTime}" class="form-control">
                         <small th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" class="text-danger"></small>
                     </div>
                 </div>
