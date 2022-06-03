@@ -50,10 +50,10 @@
                 </h2>
                 <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                     <div class="accordion-body">
-                        <label for="endTime" class="form-label">종료 시간</label>
-                        <!--<label for="endTime" th:value="*{endTime}" class="form-label">종료 시간</label>-->
+                        <label for="endTime" th:value="*{endTime}" class="form-label">종료 시간</label>
                         <input type="time" id="endTime" name="endTime" class="form-control">
-                        <!--<small th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" class="text-danger"></small>-->                    </div>
+                        <small th:if="${#fields.hasErrors('endTime')}" th:errors="*{endTime}" class="text-danger"></small>
+                    </div>
                 </div>
             </div>
         </div>

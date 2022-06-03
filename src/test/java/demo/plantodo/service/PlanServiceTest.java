@@ -103,44 +103,44 @@ class PlanServiceTest {
         Assertions.assertThat(planService.findOne(plan.getId()).isEmphasis()).isTrue();
     }
 
-    @Test
-    public void saveTerm_withEndTime_Test() throws Exception {
-        //given
-        /*member 저장*/
-        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
-        memberService.save(member);
+//    @Test
+//    public void saveTerm_withEndTime_Test() throws Exception {
+//        //given
+//        /*member 저장*/
+//        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+//        memberService.save(member);
+//
+//        LocalDate start = LocalDate.now();
+//        LocalDate end = start.plusDays(3);
+//        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, LocalTime.of(16, 0));
+//
+//        //when
+//        /*plan 저장*/
+//        planService.saveTerm(member, form);
+//
+//        //then
+//        Long memberId = member.getId();
+//        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(16, 0)));
+//    }
 
-        LocalDate start = LocalDate.now();
-        LocalDate end = start.plusDays(3);
-        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, LocalTime.of(16, 0));
-
-        //when
-        /*plan 저장*/
-        planService.saveTerm(member, form);
-
-        //then
-        Long memberId = member.getId();
-        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(16, 0)));
-    }
-
-    @Test
-    public void saveTerm_withoutEndTime_Test() throws Exception {
-        //given
-        /*member 저장*/
-        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
-        memberService.save(member);
-
-        LocalDate start = LocalDate.now();
-        LocalDate end = start.plusDays(3);
-        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, null);
-
-        //when
-        /*plan 저장*/
-        planService.saveTerm(member, form);
-
-        //then
-        Long memberId = member.getId();
-        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(23, 59)));
-    }
+//    @Test
+//    public void saveTerm_withoutEndTime_Test() throws Exception {
+//        //given
+//        /*member 저장*/
+//        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+//        memberService.save(member);
+//
+//        LocalDate start = LocalDate.now();
+//        LocalDate end = start.plusDays(3);
+//        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, null);
+//
+//        //when
+//        /*plan 저장*/
+//        planService.saveTerm(member, form);
+//
+//        //then
+//        Long memberId = member.getId();
+//        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(23, 59)));
+//    }
 
 }

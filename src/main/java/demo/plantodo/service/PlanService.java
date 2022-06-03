@@ -38,9 +38,8 @@ public class PlanService {
     }
 
     private PlanTerm createPlanTerm(Member member, PlanTermRegisterForm form) {
-        LocalTime endTime = form.getEndTime() == null ? LocalTime.of(23, 59) : form.getEndTime();
+        LocalTime endTime = form.getEndTime() == "" ? LocalTime.of(23, 59) : LocalTime.parse(form.getEndTime());
         return new PlanTerm(member, PlanStatus.NOW, form.getStartDate(), form.getTitle(), form.getEndDate(), endTime);
-
     }
 
     /*조회*/
