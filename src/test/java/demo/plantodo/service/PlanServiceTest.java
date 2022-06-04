@@ -16,9 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.assertj.core.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -81,7 +84,7 @@ class PlanServiceTest {
         }
 
         // Then
-        Assertions.assertThat(planService.findOne(plan.getId()).calculate_plan_compPercent()).isEqualTo(50.0f);
+        assertThat(planService.findOne(plan.getId()).calculate_plan_compPercent()).isEqualTo(50.0f);
     }
 
     @Test
@@ -101,7 +104,7 @@ class PlanServiceTest {
         planService.switchPlanEmphasis(plan.getId());
 
         //then
-        Assertions.assertThat(planService.findOne(plan.getId()).isEmphasis()).isTrue();
+        assertThat(planService.findOne(plan.getId()).isEmphasis()).isTrue();
     }
 
     @Test
@@ -121,7 +124,7 @@ class PlanServiceTest {
 
         //then
         Long memberId = member.getId();
-        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(16, 0)));
+        assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(16, 0)));
     }
 
     @Test
@@ -141,7 +144,7 @@ class PlanServiceTest {
 
         //then
         Long memberId = member.getId();
-        Assertions.assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(23, 59)));
+        assertThat(planService.findAllPlanTerm(memberId).get(0).getEndTime().equals(LocalTime.of(23, 59)));
     }
 
     @Test
@@ -166,7 +169,7 @@ class PlanServiceTest {
 
         //then
         PlanTerm findPlan = (PlanTerm) planService.findOne(savedPlan.getId());
-        Assertions.assertThat(findPlan.getEndTime().equals("18:00"));
+        assertThat(findPlan.getEndTime().equals("18:00"));
     }
 
     @Test
@@ -191,6 +194,80 @@ class PlanServiceTest {
 
         //then
         PlanTerm findPlan = (PlanTerm) planService.findOne(savedPlan.getId());
-        Assertions.assertThat(findPlan.getEndTime().equals("18:00"));
+        assertThat(findPlan.getEndTime().equals("18:00"));
     }
+
+    @Test
+    @DisplayName("종료일이 이미 지난 PlanTerm 조회")
+    public void findAllPlan_makePlanPast_1() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm1 저장_endDate가 오늘 이전*/
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = start.plusDays(1);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, "");
+        planService.saveTerm(member, form);
+
+        //when
+        Plan findPlan = planService.findAllPlan(member.getId()).get(0);
+
+        //then
+        assertThat(findPlan.getPlanStatus()).isEqualTo(PlanStatus.PAST);
+    }
+
+    @Test
+    @DisplayName("종료일이 오늘이지만 종료 시간이 지난 PlanTerm 조회")
+    public void findAllPlan_makePlanPast_2() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm1 저장*/
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String endTime = LocalTime.now().minusHours(1).format(formatter);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, endTime);
+        planService.saveTerm(member, form);
+
+        //when
+        Plan findPlan = planService.findAllPlan(member.getId()).get(0);
+
+        //then
+        assertThat(planService.findOne(findPlan.getId()).getPlanStatus()).isEqualTo(PlanStatus.PAST);
+        assertThat(planService.findOne(findPlan.getId()).getPlanStatus()).isNotEqualTo(PlanStatus.NOW);
+
+
+    }
+
+    @Test
+    @DisplayName("종료일이 오늘이고 종료 시간이 지나지 않은 PlanTerm 조회")
+    public void findAllPlan_makePlanPast_3() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm 저장*/
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String endTime = LocalTime.now().plusHours(1).format(formatter);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, endTime);
+        planService.saveTerm(member, form);
+
+        //when
+        Plan findPlan = planService.findAllPlan(member.getId()).get(0);
+
+        //then
+        assertThat(planService.findOne(findPlan.getId()).getPlanStatus()).isEqualTo(PlanStatus.NOW);
+        assertThat(planService.findOne(findPlan.getId()).getPlanStatus()).isNotEqualTo(PlanStatus.PAST);
+    }
+
+
 }
