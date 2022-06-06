@@ -2,6 +2,7 @@ package demo.plantodo.controller;
 
 import demo.plantodo.domain.Plan;
 import demo.plantodo.domain.PlanRegular;
+import demo.plantodo.domain.PlanTerm;
 import demo.plantodo.domain.TodoDate;
 import demo.plantodo.form.CalendarSearchForm;
 import demo.plantodo.repository.PlanRepository;
@@ -46,12 +47,14 @@ public class HomeController {
      @PostMapping
      public String afterSearchHome(@RequestParam("targetYear") int targetYear,
                                    @RequestParam("targetMonth") int targetMonth,
-                                   Model model) {
+                                   Model model,
+                                   HttpServletRequest request) {
 
           LocalDate tmpDate = LocalDate.of(targetYear, targetMonth, 1);
           int length = tmpDate.lengthOfMonth();
           CalendarSearchForm calendarSearchForm = new CalendarSearchForm(targetYear, targetMonth);
           LocalDate[][] calendar = calendarSearchForm.makeCalendar(targetYear, targetMonth, length);
+
           model.addAttribute("calendarSearchForm", calendarSearchForm);
           model.addAttribute("calendar", calendar);
           return "main-home";

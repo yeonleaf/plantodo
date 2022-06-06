@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -71,6 +72,13 @@ public class PlanService {
         return planRepository.findAllPlanRegular(memberId);
     }
 
+    public List<PlanTerm> findUrgentPlanTerms(Long memberId) {
+        List<PlanTerm> nowPlans = planRepository.findUrgentPlanTerms(memberId);
+        return nowPlans.stream()
+                .filter(p -> p.calculate_plan_compPercent() != 100)
+                .sorted(Comparator.comparing(PlanTerm::getEndTime)).collect(Collectors.toList());
+    }
+
     /*수정*/
     public void updateStatus(Long planId) {
         planRepository.updateStatus(planId);
@@ -104,8 +112,8 @@ public class PlanService {
         }
     }
 
-    public List<Plan> findAllPlanForPlanRegister(Long memberId) {
-        return planRepository.findAllPlanForPlanRegister(memberId);
+    public List<Plan> findAllNowPlans(Long memberId) {
+        return planRepository.findAllNowPlans(memberId);
     }
 
     public List<Plan> findAllPlanForBlock(LocalDate eachDate, Long memberId) {

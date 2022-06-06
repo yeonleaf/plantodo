@@ -239,12 +239,18 @@ public class PlanController {
     public String switchPlanEmphasis(@RequestParam Long planId,
                                      @RequestParam String pageInfo) {
         planService.switchPlanEmphasis(planId);
+
+        return getTemplateByPageInfo(planId, pageInfo);
+    }
+
+    private String getTemplateByPageInfo(Long planId, String pageInfo) {
         if (pageInfo.equals("detail")) {
             return "redirect:/plan/" + planId.toString();
-        } else {
+        } else if (pageInfo.equals("list")) {
             return "redirect:/plan/plan-list";
+        } else {
+            return "redirect:/home";
         }
-
     }
 
 }

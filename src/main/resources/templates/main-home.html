@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--Impact CSS-->
+    <link href="/css/my.css" rel="stylesheet">
     <link href="/css/front.css" rel="stylesheet">
     <!--Bootstrap CSS-->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
@@ -58,6 +59,28 @@
                 </th>
             </tr>
         </table>
+
+        <div class="container-sm">
+            <div class="row row-cols-1 row-cols-md-6 g-4">
+                <div class="col" th:each="planTerm : ${urgentPlans}">
+                    <div class="card border-danger">
+                        <div class="card-body position-relative">
+                            <div class="position-absolute top-0 start-100 translate-middle badge">
+                                <div id="emphasis">
+                                    <fieldset>
+                                        <input type="checkbox" th:id="${'emphasis'+planTerm.id}" th:checked="${planTerm.emphasis==true}" th:attr="onclick=|switchPlanEmphasis('${planTerm.id}', 'main')|"><label th:for="${'emphasis'+planTerm.id}">⭐</label>
+                                    </fieldset>
+                                </div>
+                            </div>
+
+                            <a th:href="@{'/plan/' + ${planTerm.id}}" class="card-title text-dark" th:text="${planTerm.title}"></a>
+                            <p class="card-text text-danger" th:text="${'오늘 ' + planTerm.endTime + ' 종료'}"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="d-grid gap-2">
             <a href="/plan/type" role="button" class="btn btn-primary">PLAN REGISTER</a>
             <a href="/todo/register" role="button" class="btn btn-primary">TODO REGISTER</a>

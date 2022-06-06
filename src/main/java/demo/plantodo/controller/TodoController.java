@@ -35,7 +35,7 @@ public class TodoController {
     public String createRegisterForm(HttpServletRequest request, Model model) {
         Long memberId = memberService.getMemberId(request);
 
-        List<Plan> plans = planService.findAllPlanForPlanRegister(memberId);
+        List<Plan> plans = planService.findAllNowPlans(memberId);
 
         model.addAttribute("plans", plans);
         model.addAttribute("todoRegisterForm", new TodoRegisterForm());

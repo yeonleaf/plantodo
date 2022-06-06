@@ -66,37 +66,14 @@ public class PlanRepository {
                 .getResultList();
     }
 
-    public int makeOutdatedPlansPast(List<Plan> planList) {
-        int finishedCnt = 0;
-        for (Plan plan : planList) {
-            if (checkPlanTermCompleted(plan) && plan.getPlanStatus() == PlanStatus.NOW) {
-                Plan needsFinish = findOne(plan.getId());
-                needsFinish.changeToPast();
-                finishedCnt += 1;
-            }
-        }
-        return finishedCnt;
-    }
-
-    public boolean checkPlanTermCompleted(Plan plan) {
-        LocalDate today = LocalDate.now();
-        LocalTime now = LocalTime.now();
-        if (plan instanceof PlanTerm) {
-            PlanTerm planTerm = (PlanTerm) plan;
-            LocalDate endDate = planTerm.getEndDate();
-            LocalTime endTime = planTerm.getEndTime();
-
-            if (plan.getPlanStatus().equals(PlanStatus.NOW)) {
-                if (today.isAfter(endDate)) {
-                    return true;
-                }
-
-                if (today.isEqual(endDate) && now.isAfter(endTime)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    /*now인 Plan중 달성도가 100%가 아닌 것만 조회*/
+    public List<PlanTerm> findUrgentPlanTerms(Long memberId) {
+        findNowPlans_SwitchToPast(memberId);
+        return em.createQuery("select p from Plan p where p.member.id = :memberId and p.planStatus = :now and treat(p as PlanTerm).endDate = :today")
+                .setParameter("memberId", memberId)
+                .setParameter("now", PlanStatus.NOW)
+                .setParameter("today", LocalDate.now())
+                .getResultList();
     }
 
     /*수정*/
@@ -128,8 +105,49 @@ public class PlanRepository {
         plan.switchEmphasis();
     }
 
+    /*상태가 Now인 Plan만 가져와서 기한이 지난 경우 PAST로 전환 (refresh)*/
+    public void findNowPlans_SwitchToPast(Long memberId) {
+        List<Plan> nowPlans = findAllNowPlans(memberId);
+        makeOutdatedPlansPast(nowPlans);
+    }
+
+    /*now -> past로 Plan의 상태를 변경*/
+    public int makeOutdatedPlansPast(List<Plan> planList) {
+        int finishedCnt = 0;
+        for (Plan plan : planList) {
+            if (checkPlanTermCompleted(plan) && plan.getPlanStatus() == PlanStatus.NOW) {
+                Plan needsFinish = findOne(plan.getId());
+                needsFinish.changeToPast();
+                finishedCnt += 1;
+            }
+        }
+        return finishedCnt;
+    }
+
+    public boolean checkPlanTermCompleted(Plan plan) {
+        LocalDate today = LocalDate.now();
+        LocalTime now = LocalTime.now();
+        if (plan instanceof PlanTerm) {
+            PlanTerm planTerm = (PlanTerm) plan;
+            LocalDate endDate = planTerm.getEndDate();
+            LocalTime endTime = planTerm.getEndTime();
+
+            if (planTerm.getPlanStatus().equals(PlanStatus.NOW)) {
+                if (today.isAfter(endDate)) {
+                    return true;
+                }
+
+                if (today.isEqual(endDate) && now.isAfter(endTime)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
     /*plan register용 메서드 (상태가 now인 것만 검색)*/
-    public List<Plan> findAllPlanForPlanRegister(Long memberId) {
+    public List<Plan> findAllNowPlans(Long memberId) {
         return em.createQuery("select p from Plan p where p.member.id=:memberId and p.planStatus = :now")
                 .setParameter("memberId", memberId)
                 .setParameter("now", PlanStatus.NOW)

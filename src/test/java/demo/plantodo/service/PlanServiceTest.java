@@ -17,9 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -269,5 +269,110 @@ class PlanServiceTest {
         assertThat(planService.findOne(findPlan.getId()).getPlanStatus()).isNotEqualTo(PlanStatus.PAST);
     }
 
+    @Test
+    public void findUrgentPlans_Test_OnlyUrgent() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm 저장*/
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String endTime = LocalTime.now().plusHours(1).format(formatter);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, endTime);
+        planService.saveTerm(member, form);
+
+        //when
+        List<PlanTerm> urgentPlans = planService.findUrgentPlanTerms(member.getId());
+
+        //then
+        Assertions.assertThat(urgentPlans.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void findUrgentPlans_Test_Mixed() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm 저장*/
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalDate start = LocalDate.now().minusDays(3);
+
+        // endDate가 오늘이지만 아직 endTime이 지나지 않은 Plan (urgent case)
+        LocalDate end1 = LocalDate.now();
+        String endTime1 = LocalTime.now().plusHours(1).format(formatter);
+        PlanTermRegisterForm form1 = new PlanTermRegisterForm("plan1", start, end1, endTime1);
+
+
+        // endDate가 오늘이고 endTime도 이미 지난 Plan (정상적으로는 등록 불가)
+        LocalDate end2 = LocalDate.now();
+        String endTime2 = LocalTime.now().minusHours(1).format(formatter);
+        PlanTermRegisterForm form2 = new PlanTermRegisterForm("plan2", start, end2, endTime2);
+
+        // endDate가 아예 내일인 경우
+        LocalDate end3 = LocalDate.now().plusDays(1);
+        PlanTermRegisterForm form3 = new PlanTermRegisterForm("plan3", start, end3, "");
+
+        planService.saveTerm(member, form1);
+        planService.saveTerm(member, form2);
+        planService.saveTerm(member, form3);
+
+        //when
+        List<PlanTerm> urgentPlans = planService.findUrgentPlanTerms(member.getId());
+
+        //then
+        Assertions.assertThat(urgentPlans.size()).isEqualTo(1);
+    }
+    
+    @Test
+    public void findUrgentPlans_Test_sorted() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm 저장*/
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        LocalDate start = LocalDate.now().minusDays(3);
+
+        /*endDate, endTime이 아직 지나지 않은 PlanTerm들*/
+        /*endDate가 오늘이고 endTime이 각각 다른 Plan*/
+        LocalDate end1 = LocalDate.now();
+        String endTime1 = LocalTime.now().plusHours(1).format(formatter);
+        PlanTermRegisterForm form1 = new PlanTermRegisterForm("plan1", start, end1, endTime1);
+
+        String endTime2 = LocalTime.now().plusHours(2).format(formatter);
+        PlanTermRegisterForm form2 = new PlanTermRegisterForm("plan2", start, end1, endTime2);
+
+        String endTime3 = LocalTime.now().plusHours(3).format(formatter);
+        PlanTermRegisterForm form3 = new PlanTermRegisterForm("plan3", start, end1, endTime3);
+
+        planService.saveTerm(member, form1);
+        planService.saveTerm(member, form2);
+        planService.saveTerm(member, form3);
+
+        //when
+        List<PlanTerm> urgentPlans = planService.findUrgentPlanTerms(member.getId());
+
+        //then
+        // plan1 -> plan2 -> plan3 순으로 출력되어야 함
+        List<String> result = urgentPlans.stream()
+                .map(p -> p.getTitle())
+                .collect(Collectors.toList());
+
+        for (String s : result) {
+            System.out.println(s);
+        }
+
+        List<String> answer = Arrays.asList("plan1", "plan2", "plan3");
+
+        Assertions.assertThat(result).isEqualTo(answer);
+    }
 
 }
