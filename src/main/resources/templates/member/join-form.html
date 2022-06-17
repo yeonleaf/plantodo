@@ -33,6 +33,10 @@
                 <input type="text" id="nickname" name="nickname" class="form-control" th:field="*{nickname}" placeholder="사용할 별명을 입력해주세요.">
                 <div th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}" class="text-danger"></div>
             </div>
+            <div class="mb-3">
+                <label for="permission" class="form-check-label">알림 수신을 허용하시겠습니까?</label>
+                <input type="checkbox" id="permission" name="permission" value="granted" th:field="*{permission}" class="round-check">
+            </div>
             <div class="row gap-2">
                 <input type="submit" value="가입하기" class="btn btn-success"/>
             </div>

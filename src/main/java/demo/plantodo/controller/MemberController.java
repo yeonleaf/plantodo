@@ -1,9 +1,12 @@
 package demo.plantodo.controller;
 
 import demo.plantodo.domain.Member;
+import demo.plantodo.domain.PermStatus;
+import demo.plantodo.domain.Settings;
 import demo.plantodo.form.MemberJoinForm;
 import demo.plantodo.form.MemberLoginForm;
 import demo.plantodo.service.MemberService;
+import demo.plantodo.service.SettingsService;
 import demo.plantodo.validation.MemberJoinlValidator;
 import lombok.RequiredArgsConstructor;
 
@@ -17,12 +20,14 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/member")
 public class MemberController {
     private final MemberService memberService;
+    private final SettingsService settingsService;
     private final MemberJoinlValidator memberJoinlValidator;
 
     @GetMapping(value = "/join")
@@ -56,11 +61,19 @@ public class MemberController {
             return "member/join-form";
         }
 
-        Member member = new Member(memberJoinForm.getEmail(), memberJoinForm.getPassword(), memberJoinForm.getNickname());
+        PermStatus status = memberJoinForm.getPermission() != null ? PermStatus.GRANTED : PermStatus.DENIED;
+        System.out.println("status : " + status);
+        Settings settings = new Settings(status);
+        settingsService.save(settings);
+
+        Member member = new Member(memberJoinForm.getEmail(), memberJoinForm.getPassword(), memberJoinForm.getNickname(), settings);
         memberService.save(member);
+
+        System.out.println("permission : " + memberJoinForm.getPermission());
         model.addAttribute("memberLoginForm", new MemberLoginForm());
         return "redirect:/member/login";
     }
+
 
     @GetMapping("/login")
     public String createLoginForm(Model model) {

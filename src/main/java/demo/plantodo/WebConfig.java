@@ -18,6 +18,7 @@ public class WebConfig implements WebMvcConfigurer {
 
         registry.addInterceptor(new HomeRenderInterceptor())
                 .order(3)
-                .addPathPatterns("/home", "/home/*", "/member/login", "/todo/register", "/plan/register/*");
+                .addPathPatterns("/home", "/home/*", "/member/login", "/todo/register", "/plan/register/*")
+                .excludePathPatterns("/", "/member/join");
     }
 }
