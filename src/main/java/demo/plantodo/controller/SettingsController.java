@@ -23,14 +23,16 @@ public class SettingsController {
     @GetMapping
     public String createSettingsUpdateForm(Model model, HttpServletRequest request) {
         Settings settings = settingsService.findOneByMemberId(memberService.getMemberId(request));
-        SettingsUpdateForm form = new SettingsUpdateForm(settings.getNotification_perm(), settings.isDeadline_alarm() ? true : false, settings.getDeadline_alarm_term());
+        SettingsUpdateForm form = new SettingsUpdateForm(settings.getNotification_perm(), settings.isDeadline_alarm() ? true : false, settings.getDeadline_alarm_term(), settings.getId());
         model.addAttribute("settingsUpdateForm", form);
         return "/member/settings-form";
     }
 
     @PostMapping
-    public void updateSettings(@ModelAttribute("settingsUpdateForm") SettingsUpdateForm settingsUpdateForm, Model model, HttpServletRequest request) {
-        settingsService.update(memberService.getMemberId(request), settingsUpdateForm);
+    public String updateSettings(@RequestBody SettingsUpdateForm settingsUpdateForm) {
+        settingsService.update(settingsUpdateForm.getSettings_id(), settingsUpdateForm);
+        return "redirect:/settings";
     }
+
 
 }

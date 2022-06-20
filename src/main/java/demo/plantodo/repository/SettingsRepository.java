@@ -28,7 +28,6 @@ public class SettingsRepository {
     }
 
     public void update(Long settingsId, SettingsUpdateForm settingsUpdateForm) {
-        System.out.println("settingsId : " + settingsId);
         Settings settings = findOne(settingsId);
         settings.setNotification_perm(settingsUpdateForm.getNotification_perm());
         settings.setDeadline_alarm(settingsUpdateForm.isDeadline_alarm() ? true : false);

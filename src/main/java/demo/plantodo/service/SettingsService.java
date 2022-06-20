@@ -33,8 +33,9 @@ public class SettingsService {
         return memberRepository.findOne(memberId).getSettings();
     }
 
-    public void update(Long memberId, SettingsUpdateForm settingsUpdateForm) {
-        Long settingsId = findOneByMemberId(memberId).getId();
+    public void update(Long settingsId, SettingsUpdateForm settingsUpdateForm) {
         settingsRepository.update(settingsId, settingsUpdateForm);
     }
+
+
 }

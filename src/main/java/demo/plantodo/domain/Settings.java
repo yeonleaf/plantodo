@@ -31,8 +31,6 @@ public class Settings {
 
     /*string이 들어가 있을 때*/
     public Settings(String notification_perm) {
-        this.notification_perm = new StringToPermStatusConverter().convert(notification_perm);
-        this.deadline_alarm = false;
-        this.deadline_alarm_term = 0;
+        this(new StringToPermStatusConverter().convert(notification_perm));
     }
 }
