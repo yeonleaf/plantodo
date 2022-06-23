@@ -286,7 +286,6 @@ function editComment() {
 
 /*settings*/
 /*termBlock style을 none <- -> inline으로 변경한다.*/
-
 $(document).on("click", "#deadline_alarm", function(event) {
     event.preventDefault();
 
@@ -310,13 +309,35 @@ $(document).on("click", "#deadline_alarm", function(event) {
     }
 })
 
+/*submit 버튼 클릭 시 이미 notification perm을 얻은 상태인지 아닌지 확인하고 얻지 않은 경우 모달 창을 띄운다.*/
+$(document).ready(function () {
+    $("#deadline_alarm_submit").click(function () {
+        let notification_perm = $('#notification_perm').val();
+        if (notification_perm === "DENIED") {
+            $("#myModal").modal('show');
+        } else {
+            let data = JSON.stringify({
+                settings_id: $('#settings_id').val(),
+                notification_perm: "GRANTED",
+                deadline_alarm: true,
+                deadline_alarm_term: $('#deadline_alarm_term').val()
+            });
+            if ('permission' in Notification) {
+                Notification.permission = 'granted';
+            }
+            /*폼 정보를 update*/
+            fetch("/settings", {
+                method: "POST",
+                body: data,
+                headers: {"Content-Type": "application/json"}
+            });
+        }
+    })
+})
 
-/*submit 버튼을 클릭했을 때(무조건 off->on 상태) notification perm을 얻은 상태인지 얻지 않았는지 확인한다.*/
-$(document).on("click", "#deadline_alarm_submit", function(event) {
-
-    event.preventDefault();
-
-    let notification_perm = $('#notification_perm').val();
+/*모달 창에서 granted를 선택한 경우*/
+$(document).on("click", "#grantedBtn", function(event) {
+    $("#myModal").modal('hide');
 
     let data = JSON.stringify({
         settings_id: $('#settings_id').val(),
@@ -325,44 +346,19 @@ $(document).on("click", "#deadline_alarm_submit", function(event) {
         deadline_alarm_term: $('#deadline_alarm_term').val()
     });
 
-    if (notification_perm === "GRANTED") {
-        /*granted 상태이면 Notification 객체의 상태를 granted로 변경한다.*/
-        if ('permission' in Notification) {
-            Notification.permission = 'granted';
-        }
-        /*폼 정보를 update한다.*/
-        fetch("/settings", {
-            method: "POST",
-            body: data,
-            headers: {"Content-Type": "application/json"}
-        });
-    } else if (notification_perm === "DENIED" || Notification.permission === "default") {
-        /*denied 상태이면 permission를 얻는 시도를 한다.*/
-        Notification.requestPermission().then((permission) => {
-            handlePermission(data, permission);
-        })
+    if ('permission' in Notification) {
+        Notification.permission = 'granted';
     }
-
+    /*Notification_perm 정보를 update한다.*/
+    fetch("/settings", {
+        method: "POST",
+        body: data,
+        headers: {"Content-Type": "application/json"}
+    });
 })
 
-function handlePermission(data, permission) {
-    /*permission이 granted상태가 되었다면*/
-    if (permission === 'granted') {
-        /*Notification.permission을 granted로 바꾼다.*/
-        if ('permission' in Notification) {
-            Notification.permission = 'granted';
-        }
-        /*form 데이터를 update한다.*/
-        fetch("/settings", {
-            method: "POST",
-            body: data,
-            headers: {"Content-Type": "application/json"}
-        });
-    } else {
-        /*permission이 여전히 denied상태일 경우 데이터 update를 하지 않는다.*/
-        if ('permission' in Notification) {
-            Notification.permission = 'default';
-        }
-    }
-
-}
+/*모달 창에서 denied를 선택한 경우 모달 창을 닫고 경고 창을 띄운다. Notification.permission의 변화 없음*/
+$(document).on("click", "#deniedBtn", function(event) {
+    $("#myModal").modal('hide');
+    alert("알림 허용 권한이 없으면 마감 알림을 받으실 수 없습니다.");
+})
