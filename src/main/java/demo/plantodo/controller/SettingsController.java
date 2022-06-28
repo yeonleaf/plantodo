@@ -28,7 +28,7 @@ public class SettingsController {
         return "/member/settings-form";
     }
 
-    @PostMapping
+    @PostMapping("/update")
     public String updateSettings(@RequestBody SettingsUpdateForm settingsUpdateForm) {
         settingsService.update(settingsUpdateForm.getSettings_id(), settingsUpdateForm);
         return "redirect:/settings";

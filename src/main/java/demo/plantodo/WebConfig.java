@@ -2,6 +2,7 @@ package demo.plantodo;
 
 import demo.plantodo.interceptor.HomeRenderInterceptor;
 import demo.plantodo.interceptor.LoginCheckInterceptor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -17,8 +18,10 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/", "/member/join", "/member/login");
 
         registry.addInterceptor(new HomeRenderInterceptor())
-                .order(3)
+                .order(2)
                 .addPathPatterns("/home", "/home/*", "/member/login", "/todo/register", "/plan/register/*")
                 .excludePathPatterns("/", "/member/join");
+
     }
+
 }

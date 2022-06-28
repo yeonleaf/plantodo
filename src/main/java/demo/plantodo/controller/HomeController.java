@@ -4,7 +4,6 @@ import demo.plantodo.domain.Plan;
 import demo.plantodo.domain.PlanRegular;
 import demo.plantodo.domain.TodoDate;
 import demo.plantodo.form.CalendarSearchForm;
-import demo.plantodo.repository.PlanRepository;
 import demo.plantodo.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -27,7 +26,6 @@ import java.util.List;
 public class HomeController {
      private final MemberService memberService;
      private final PlanService planService;
-     private final PlanRepository planRepository;
      private final TodoDateService todoDateService;
 
      @GetMapping
@@ -35,11 +33,12 @@ public class HomeController {
 
           LocalDate today = LocalDate.now();
           if (!checkCookie(request)) {
-               Cookie cookie = regularTodoDateInitiate(request, today);
-               if (cookie.getName().equals("RegularTodoDateInitiatedToday")) {
-                    response.addCookie(cookie);
+               Cookie cookie1 = regularTodoDateInitiate(request, today);
+               if (cookie1.getName().equals("RegularTodoDateInitiatedToday")) {
+                    response.addCookie(cookie1);
                }
           }
+
           return "main-home";
      }
 

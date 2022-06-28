@@ -293,7 +293,7 @@ $(document).on("click", "#deadline_alarm", function(event) {
         $("#termBlock").css("display", "inline");
     } else {
         /*deadline_alarm을 false로 만들고 deadline_alarm_term을 0으로 초기화한다.*/
-        fetch("/settings", {
+        fetch("/settings/update", {
             method: 'post',
             body: JSON.stringify({
                 'settings_id': $('#settings_id').val(),
@@ -326,7 +326,7 @@ $(document).ready(function () {
                 Notification.permission = 'granted';
             }
             /*폼 정보를 update*/
-            fetch("/settings", {
+            fetch("/settings/update", {
                 method: "POST",
                 body: data,
                 headers: {"Content-Type": "application/json"}
@@ -350,7 +350,7 @@ $(document).on("click", "#grantedBtn", function(event) {
         Notification.permission = 'granted';
     }
     /*Notification_perm 정보를 update한다.*/
-    fetch("/settings", {
+    fetch("/settings/update", {
         method: "POST",
         body: data,
         headers: {"Content-Type": "application/json"}
@@ -362,3 +362,4 @@ $(document).on("click", "#deniedBtn", function(event) {
     $("#myModal").modal('hide');
     alert("알림 허용 권한이 없으면 마감 알림을 받으실 수 없습니다.");
 })
+

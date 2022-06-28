@@ -13,14 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -84,7 +84,8 @@ public class MemberController {
     @PostMapping("/login")
     public String loginMember(@Validated @ModelAttribute("memberLoginForm") MemberLoginForm memberLoginForm,
                               BindingResult bindingResult,
-                              HttpServletRequest request) {
+                              HttpServletRequest request,
+                              HttpServletResponse response) {
         /*null값 체크 후 에러가 발생했을 경우 이전 페이지로 돌아가기*/
         if (bindingResult.hasErrors()) {
             return "member/login-form";
@@ -116,6 +117,20 @@ public class MemberController {
         HttpSession session = request.getSession();
         session.setAttribute("memberId", rightMember.getId());
         session.setAttribute("nickname", rightMember.getNickname());
+
+        /*마감 알람 on-off 여부 확인*/
+        Settings settings = memberService.findOne(rightMember.getId()).getSettings();
+
+        /*혹시 alarmStart 쿠키가 아직 있는 경우 삭제*/
+        Cookie pastAlarmStart = new Cookie("alarmStart", null);
+        pastAlarmStart.setMaxAge(0);
+        response.addCookie(pastAlarmStart);
+
+        if (settings.isDeadline_alarm()) {
+            Cookie cookie = new Cookie("alarmStart", "");
+            response.addCookie(cookie);
+        }
+
         /*로그인 세션 유지 시간 (임의 변경 가능)*/
         session.setMaxInactiveInterval(300);
         return "redirect:/home";

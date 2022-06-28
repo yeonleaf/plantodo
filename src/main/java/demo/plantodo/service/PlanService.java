@@ -71,6 +71,12 @@ public class PlanService {
         return planRepository.findAllPlanRegular(memberId);
     }
 
+//    public List<PlanTerm> findUrgentPlansWithEmphasis(Long memberId) {
+//        List<PlanTerm> plans = planRepository.findAllPlanTerm(memberId);
+//        /*endDate가 오늘 + endTime이 있는 경우 현재 시각 이전 + emphasis가 true인 plan만 남긴다.*/
+//        plans.stream().filter(p -> p.getEndTime().equals(LocalDate.now()));
+//    }
+
     /*수정*/
     public void updateStatus(Long planId) {
         planRepository.updateStatus(planId);
