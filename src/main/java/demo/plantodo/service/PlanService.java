@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -71,11 +73,12 @@ public class PlanService {
         return planRepository.findAllPlanRegular(memberId);
     }
 
-//    public List<PlanTerm> findUrgentPlansWithEmphasis(Long memberId) {
-//        List<PlanTerm> plans = planRepository.findAllPlanTerm(memberId);
-//        /*endDate가 오늘 + endTime이 있는 경우 현재 시각 이전 + emphasis가 true인 plan만 남긴다.*/
-//        plans.stream().filter(p -> p.getEndTime().equals(LocalDate.now()));
-//    }
+    public List<Plan> findUrgentPlansWithEmphasis(Long memberId) {
+        /*혹시 Past상태가 안 된 Plan이 있으면 Past 상태로 + 모든 Plan 조회*/
+        List<Plan> plans = planRepository.findAllPlan(memberId);
+        /*planTerm 필터링  / emphasis로 필터링 / 타입을 PlanTerm으로 바꾸기 / endDate 필터링*/
+        return plans.stream().filter(p -> p instanceof PlanTerm).filter(Plan::isEmphasis).map(p -> (PlanTerm) p).filter(p -> p.getEndDate().isEqual(LocalDate.now())).collect(Collectors.toList());
+    }
 
     /*수정*/
     public void updateStatus(Long planId) {

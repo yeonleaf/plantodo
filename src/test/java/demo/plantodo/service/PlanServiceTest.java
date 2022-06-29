@@ -1,5 +1,6 @@
 package demo.plantodo.service;
 
+import demo.plantodo.PlantodoApplication;
 import demo.plantodo.domain.*;
 import demo.plantodo.form.PlanTermRegisterForm;
 import demo.plantodo.form.PlanTermUpdateForm;
@@ -8,9 +9,9 @@ import demo.plantodo.repository.PlanRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,8 +25,7 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
-@RunWith(SpringRunner.class)
+@SpringBootTest(classes = {PlantodoApplication.class})
 class PlanServiceTest {
     @Autowired private PlanService planService;
     @Autowired private MemberService memberService;
@@ -269,5 +269,76 @@ class PlanServiceTest {
         assertThat(planService.findOne(findPlan.getId()).getPlanStatus()).isNotEqualTo(PlanStatus.PAST);
     }
 
+
+    @Test
+    @DisplayName("(endDate = Today), (isEmphasis = false)")
+    public void findUrgentPlansWithEmphasis_Test_1() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm 저장*/
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String endTime = LocalTime.now().plusHours(1).format(formatter);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, endTime);
+        planService.saveTerm(member, form);
+
+        //then
+        Assertions.assertThat(planService.findUrgentPlansWithEmphasis(member.getId()).size()).isEqualTo(0);
+
+    }
+
+    @Test
+    @DisplayName("(endDate = Today), (isEmphasis = true)")
+    public void findUrgentPlansWithEmphasis_Test_2() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm 저장*/
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String endTime = LocalTime.now().plusHours(1).format(formatter);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("plan1", start, end, endTime);
+        planService.saveTerm(member, form);
+
+        Plan plan = planService.findAllPlan(member.getId()).get(0);
+        plan.switchEmphasis();
+
+        //then
+        Assertions.assertThat(planService.findUrgentPlansWithEmphasis(member.getId()).size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("term1 [(endDate = Today), (isEmphasis = true)], regular1")
+    public void findUrgentPlansWithEmphasis_Test_3() throws Exception {
+        //given
+        /*member 저장*/
+        Member member = new Member("test@abc.co.kr", "abc123!@#", "test");
+        memberService.save(member);
+
+        /*PlanTerm 저장*/
+        LocalDate start = LocalDate.now().minusDays(3);
+        LocalDate end = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+        String endTime = LocalTime.now().plusHours(1).format(formatter);
+        PlanTermRegisterForm form = new PlanTermRegisterForm("planTerm", start, end, endTime);
+        planService.saveTerm(member, form);
+
+        /*planRegular 저장*/
+        PlanRegular regular = new PlanRegular(member, PlanStatus.NOW, start, "planRegular");
+        planService.saveRegular(regular);
+
+        Plan plan = planService.findAllPlan(member.getId()).get(0);
+        plan.switchEmphasis();
+
+        //then
+        Assertions.assertThat(planService.findUrgentPlansWithEmphasis(member.getId()).size()).isEqualTo(1);
+    }
 
 }
