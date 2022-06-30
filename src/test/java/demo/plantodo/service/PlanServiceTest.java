@@ -287,7 +287,7 @@ class PlanServiceTest {
         planService.saveTerm(member, form);
 
         //then
-        Assertions.assertThat(planService.findUrgentPlansWithEmphasis(member.getId()).size()).isEqualTo(0);
+        Assertions.assertThat(planService.findUrgentPlans(member.getId()).size()).isEqualTo(0);
 
     }
 
@@ -311,7 +311,7 @@ class PlanServiceTest {
         plan.switchEmphasis();
 
         //then
-        Assertions.assertThat(planService.findUrgentPlansWithEmphasis(member.getId()).size()).isEqualTo(1);
+        Assertions.assertThat(planService.findUrgentPlans(member.getId()).size()).isEqualTo(1);
     }
 
     @Test
@@ -338,7 +338,7 @@ class PlanServiceTest {
         plan.switchEmphasis();
 
         //then
-        Assertions.assertThat(planService.findUrgentPlansWithEmphasis(member.getId()).size()).isEqualTo(1);
+        Assertions.assertThat(planService.findUrgentPlans(member.getId()).size()).isEqualTo(1);
     }
 
 }

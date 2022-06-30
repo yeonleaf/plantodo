@@ -1,5 +1,7 @@
 package demo.plantodo.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import demo.plantodo.VO.UrgentMsgInfoVO;
 import demo.plantodo.domain.*;
 import demo.plantodo.form.PlanRegularUpdateForm;
 import demo.plantodo.form.PlanTermRegisterForm;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.jni.Local;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -21,6 +24,7 @@ import java.util.stream.Stream;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class PlanService {
     private final TodoService todoService;
     private final PlanRepository planRepository;
@@ -73,12 +77,20 @@ public class PlanService {
         return planRepository.findAllPlanRegular(memberId);
     }
 
-    public List<Plan> findUrgentPlansWithEmphasis(Long memberId) {
+    public List<PlanTerm> findUrgentPlans(Long memberId) {
         /*혹시 Past상태가 안 된 Plan이 있으면 Past 상태로 + 모든 Plan 조회*/
         List<Plan> plans = planRepository.findAllPlan(memberId);
-        /*planTerm 필터링  / emphasis로 필터링 / 타입을 PlanTerm으로 바꾸기 / endDate 필터링*/
-        return plans.stream().filter(p -> p instanceof PlanTerm).filter(Plan::isEmphasis).map(p -> (PlanTerm) p).filter(p -> p.getEndDate().isEqual(LocalDate.now())).collect(Collectors.toList());
+        /*planTerm 필터링  / NOW 필터링 / 달성도 필터링 / emphasis로 필터링 / 타입을 PlanTerm으로 바꾸기 / endDate 필터링*/
+        return plans.stream()
+                .filter(p -> p instanceof PlanTerm)
+                .filter(p -> p.getPlanStatus().equals(PlanStatus.NOW))
+                .filter(p -> p.calculate_plan_compPercent() != 100)
+                .filter(Plan::isEmphasis).map(p -> (PlanTerm) p)
+                .filter(p -> p.getEndDate().isEqual(LocalDate.now()))
+                .sorted(Comparator.comparing(PlanTerm::getEndTime))
+                .collect(Collectors.toList());
     }
+
 
     /*수정*/
     public void updateStatus(Long planId) {

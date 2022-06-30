@@ -166,15 +166,20 @@
         }
 
         eventSource.onmessage = (e) => {
-            console.log("메세지 전송 성공!")
-            let notification = new Notification('현재 메세지', {body: e.data});
+            let data = JSON.parse(e.data);
+            let msg = "아직 완료되지 않은 일정이 " + data.count + "개 있습니다. 가장 마감이 임박한 일정으로 이동하시겠습니까?";
+            let notification = new Notification('현재 메세지', {title: "마감 알림", body: msg});
             notification.actions = [
                 {
                     action: 'show-uncompleted-action',
                     title: 'Message'
                 }
             ]
-            setTimeout(notification.close.bind(notification), 2000);
+            notification.onclick = function (e) {
+                e.preventDefault();
+                window.open("/plan/" + data.planId, '_blank');
+            }
+            setTimeout(notification.close.bind(notification), 5000);
         } 
     } else {
     }
