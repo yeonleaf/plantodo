@@ -122,13 +122,12 @@ public class MemberController {
         Settings settings = memberService.findOne(rightMember.getId()).getSettings();
 
         /*혹시 alarmStart 쿠키가 아직 있는 경우 삭제*/
-        Cookie pastAlarmStart = new Cookie("alarmStart", null);
+        Cookie pastAlarmStart = new Cookie("deadline_alarm_term", null);
         pastAlarmStart.setMaxAge(0);
         response.addCookie(pastAlarmStart);
 
         if (settings.isDeadline_alarm()) {
-            Cookie cookie = new Cookie("alarmStart", "");
-            response.addCookie(cookie);
+            session.setAttribute("deadline_alarm_term", settings.getDeadline_alarm_term());
         }
 
         /*로그인 세션 유지 시간 (임의 변경 가능)*/

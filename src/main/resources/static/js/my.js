@@ -292,6 +292,9 @@ $(document).on("click", "#deadline_alarm", function(event) {
     if ($("#termBlock").css("display") === "none") {
         $("#termBlock").css("display", "inline");
     } else {
+        /*on -> off인 경우 quitAlarm한다.*/
+        fetch("/sse/quitAlarm");
+
         /*deadline_alarm을 false로 만들고 deadline_alarm_term을 0으로 초기화한다.*/
         fetch("/settings/update", {
             method: 'post',
@@ -306,12 +309,17 @@ $(document).on("click", "#deadline_alarm", function(event) {
             $("#termBlock").css("display", "none");
             $("#deadline_alarm_term").val(0);
         })
+        fetch("/sse/quitAlarm");
     }
 })
 
-/*submit 버튼 클릭 시 이미 notification perm을 얻은 상태인지 아닌지 확인하고 얻지 않은 경우 모달 창을 띄운다.*/
+/*submit 버튼 클릭 시*/
 $(document).ready(function () {
     $("#deadline_alarm_submit").click(function () {
+        /*현재 진행중인 sse연결을 끊는다. (간격이 바뀌었을 수 있기 때문)*/
+        fetch("/sse/quitAlarm");
+
+        /*이미 notification perm을 얻은 상태인지 아닌지 확인하고 얻지 않은 경우 모달 창을 띄운다.*/
         let notification_perm = $('#notification_perm').val();
         if (notification_perm === "DENIED") {
             $("#myModal").modal('show');
@@ -331,6 +339,8 @@ $(document).ready(function () {
                 body: data,
                 headers: {"Content-Type": "application/json"}
             });
+
+            $("#deadline_alarm_label").text("마감 알림 : " + $('#deadline_alarm_term').val() + "분마다")
         }
     })
 })
@@ -355,6 +365,7 @@ $(document).on("click", "#grantedBtn", function(event) {
         body: data,
         headers: {"Content-Type": "application/json"}
     });
+    $("#deadline_alarm_label").text("마감 알림 : " + $('#deadline_alarm_term').val() + "분마다")
 })
 
 /*모달 창에서 denied를 선택한 경우 모달 창을 닫고 경고 창을 띄운다. Notification.permission의 변화 없음*/

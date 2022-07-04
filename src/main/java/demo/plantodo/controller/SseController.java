@@ -1,27 +1,17 @@
 package demo.plantodo.controller;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import demo.plantodo.VO.UrgentMsgInfoVO;
 import demo.plantodo.converter.ObjToJsonConverter;
-import demo.plantodo.domain.Member;
-import demo.plantodo.domain.Plan;
 import demo.plantodo.domain.PlanTerm;
 import demo.plantodo.service.MemberService;
 import demo.plantodo.service.PlanService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -88,10 +78,9 @@ public class SseController {
 
         @Override
         public void run() {
-
             while (!Thread.interrupted()) {
+                System.out.println("running...");
                 List<PlanTerm> plans = planService.findUrgentPlans(memberId);
-
                 if (plans.size() == 0) break;
 
                 if (!clients.containsKey(memberId)) break;

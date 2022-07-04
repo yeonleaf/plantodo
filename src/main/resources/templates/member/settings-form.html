@@ -19,13 +19,6 @@
     <link rel="stylesheet" href="/css/front.css">
 </head>
 <body>
-<script>
-$(document).ready(function() {
-    $("#deadline_alarm_submit").click(function () {
-        $("#myModal").modal('show');
-    })
-})
-</script>
 <div class="cover-container w-100 h-100 p-3 mx-auto">
 
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -45,20 +38,6 @@ $(document).ready(function() {
         </div>
     </div>
 
-    <!-- Modal -->
-<!--    <div id="myModal" class="modal fade" role="dialog">-->
-<!--        <div class="modal-dialog">-->
-<!--            <div class="modal-content">-->
-<!--                <div class="modal-header">-->
-<!--                    Message-->
-<!--                </div>-->
-<!--                <div class="modal-body">-->
-<!--                    Hi!-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
     <header th:replace="fragments/common :: fragment-header" class="mb-auto"></header>
     <div class="container-sm">
         <h2 class="text-dark">Settings</h2>
@@ -67,7 +46,7 @@ $(document).ready(function() {
                 <input type="hidden" id = "settings_id" th:value="*{settings_id}">
                 <input type="hidden" id = "notification_perm" th:value="*{notification_perm}">
                 <div class="row">
-                    <label class="form-check-label" for="deadline_alarm">마감 알림 : <span th:if="*{deadline_alarm == true}" th:text="*{deadline_alarm_term + '분마다'}"></span></label>
+                    <label class="form-check-label" id="deadline_alarm_label" for="deadline_alarm">마감 알림 : <span th:if="*{deadline_alarm == true}" th:text="*{deadline_alarm_term + '분마다'}"></span></label>
                     <input type="checkbox" id="deadline_alarm" th:checked="*{deadline_alarm==true}">
                     <small class="text-dark">중요 표시를 한 (⭐) 일정의 달성도가 100%가 아닌 경우 마감일에 일정 간격으로 알람을 보냅니다.</small>
                 </div>
@@ -84,6 +63,7 @@ $(document).ready(function() {
         </div>
     </div>
 </div>
+<script src="/js/sse.js"></script>
 <script src="/js/my.js"></script>
 </body>
 </html>
