@@ -1,21 +1,7 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
-    <!--Bootstrap - required meta tags-->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!--JQUERY-->
-    <script src="/js/jquery-3.6.0.min.js"></script>
-
-    <!--Bootstrap SCRIPT-->
-    <script src="/js/bootstrap.bundle.js"></script>
-    <link href="/css/bootstrap.css" rel="stylesheet" media="all">
-    <script src="/css/front.css"></script>
-
-    <!--MY SCRIPT-->
-    <script src="/js/my.js"></script>
-    <script src="/css/my.css"></script>
+    <div th:replace="/fragments/head.html :: fragment-header"></div>
 </head>
 <body>
 <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">

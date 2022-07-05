@@ -37,8 +37,9 @@ if (sessionStorage.getItem("deadline_alarm_term") === null) {
         }
         setTimeout(notification.close.bind(notification), 5000);
 
+        let lastSent = sessionStorage.getItem("msgLastSentTime");
         sessionStorage.setItem("msgLastSentTime", new Date().getTime());
-        console.log(sessionStorage.getItem("msgLastSentTime"))
+        console.log("메세지를 다시 보내기까지의 시간 간격 : " + sessionStorage.getItem("msgLastSentTime") - lastSent);
     }
 } else {
     let msgLastSentTime = sessionStorage.getItem("msgLastSentTime");
@@ -84,8 +85,9 @@ if (sessionStorage.getItem("deadline_alarm_term") === null) {
                 }
                 setTimeout(notification.close.bind(notification), 5000);
 
+                let lastSent = sessionStorage.getItem("msgLastSentTime");
                 sessionStorage.setItem("msgLastSentTime", new Date().getTime());
-                console.log(sessionStorage.getItem("msgLastSentTime"))
+                console.log("메세지를 다시 보내기까지의 시간 간격 : " + sessionStorage.getItem("msgLastSentTime") - lastSent);
             }
         }, waitTime * 1000);
     }
